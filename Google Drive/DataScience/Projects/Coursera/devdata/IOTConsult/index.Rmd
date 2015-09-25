@@ -1,25 +1,74 @@
 ---
-title       : 
+title       : Coursera Slidify Assignment
 subtitle    : 
-author      : 
+author      : Serge Kestens (IOTConsult)
 job         : 
 framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
 highlighter : highlight.js  # {highlight.js, prettify, highlight}
 hitheme     : tomorrow      # 
-widgets     : []            # {mathjax, quiz, bootstrap}
+widgets     : [bootstrap, quiz, shiny, interactive]
 mode        : selfcontained # {standalone, draft}
 knit        : slidify::knit2slides
 ---
 
-## Read-And-Delete
+## Introduction
+<br>
+<br>
+<br>
+<br>
 
-1. Edit YAML front matter
-2. Write using R Markdown
-3. Use an empty line followed by three dashes to separate slides!
+For this assignment, we need to create 5 slides in Slidify.<br>
+The first slides contain a small description and introduction.<br>
+Slide 3 will do the needed calculations on the dataframe.<br>
+Slide 4 presents these results in a GoogleVis Line Chart.<br>
+Slide 5 presents the same results in a GoogleVis Table.<br>
+
 
 --- .class #id 
+## Data calculations on an imported rds file
 
-## Slide 2
+```{r,echo=TRUE}
+setwd ("C:/Users/gjf510/Google Drive/DataScience/Projects/coursera/devdata/IOTConsult")
+TotalRevenue <- readRDS("data/TotalRevenue.rds")
+#print(TotalRevenue)
+library(plyr)
+library(reshape2)
+
+Revenue <- ddply(TotalRevenue, c("Year"), summarise,
+                Total = sum(Total),
+                Services = sum(Services),
+                Products = sum(Products))
+print(Revenue)
+```
+
+--- &interactive
+## GoogleVis Linechart example
+<br>
+<br>
+```{r results='asis',echo=FALSE}
+suppressPackageStartupMessages(require(googleVis))
+Line <- gvisLineChart(Revenue,xvar="Year",yvar=c("Total","Services","Products"),
+                      options=list(width=900, height=300, 
+                                     legend='bottom',
+                                     hAxis="{title:'Type'}",
+                                     vAxis="{title:'Total'}")
+                      )
+print(Line, 'chart')
+```
+
+---
+## GoogleVis Table example
+<br>
+<br>
+```{r results='asis',echo=FALSE}
+require(googleVis)
+Table <- gvisTable(Revenue, 
+                    formats=list(Products="#,###",Services="#,###",Total="#,###"),
+                    options=list(page='enable')
+                   )
+print(Table, 'chart')
+```
+
 
 
 
